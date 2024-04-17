@@ -26,6 +26,7 @@ package json;
 	typedef Null;
 	typedef Number;
 	typedef String;
+	typedef Integer;
 
 	class Object;
 		/* Attributes */
@@ -248,7 +249,7 @@ package json;
 		virtual function automatic void dumpS(
 			ref util::String r_str
 		);
-			r_str.append("{\n");
+			r_str.append("{ ");
 			n_dump_depth++;
 
 			if (m_Elements.size()) begin
@@ -259,7 +260,7 @@ package json;
 				do begin
 					i = next;
 
-					r_str.append("\t", n_dump_depth);
+					//r_str.append("\t", n_dump_depth);
 					r_str.append("\"");
 					r_str.append(i);
 					r_str.append("\": ");
@@ -267,9 +268,9 @@ package json;
 					o.dumpS(r_str);
 
 					if (i != last) begin
-						r_str.append(",\n");
+						r_str.append(", ");
 					end else begin
-						r_str.append("\n");
+						r_str.append(" ");
 					end
 
 					m_Elements.next(next);
@@ -277,7 +278,7 @@ package json;
 			end
 
 			n_dump_depth--;
-			r_str.append("\t", n_dump_depth);
+			//r_str.append("\t", n_dump_depth);
 			r_str.append("}");
 		endfunction
 
@@ -509,6 +510,36 @@ package json;
 		);
 			string s;
 			s.realtoa(m_number);
+			r_str.append(s);
+		endfunction
+	endclass
+
+	class Integer extends Object;
+		/* Attributes */
+		local int m_number;
+
+		/* Methods */
+		function new (
+			input int num = 0
+		);
+			super.new();
+			m_number = num;
+		endfunction
+
+		virtual function automatic int asInt();
+			return m_number;
+		endfunction
+
+		virtual function automatic real asReal();
+			return real'(m_number);
+		endfunction
+
+		function automatic void dumpS(
+			ref util::String r_str
+		);
+			string s;
+			$sformat(s, "%d", m_number);
+			//s.inttoa(m_number);
 			r_str.append(s);
 		endfunction
 	endclass
